@@ -3,4 +3,5 @@
     <string name="title_Preview">Preview</string>
     <string name="title_Capture">Capture</string>
     <string name="title_Analysis">Analysis</string>
+    <string name="button_capture">Capture</string>
 </resources>

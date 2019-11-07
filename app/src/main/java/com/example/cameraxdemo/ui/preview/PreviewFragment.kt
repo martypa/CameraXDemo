@@ -22,13 +22,12 @@ import com.example.cameraxdemo.R
 import kotlinx.android.synthetic.main.fragment_preview.*
 import java.util.concurrent.Executors
 
-private const val REQUEST_CODE_PERMISSIONS = 10
-private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
-
 class PreviewFragment : Fragment() {
 
+    private val REQUEST_CODE_PERMISSIONS = 10
+    private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
+
     private lateinit var previewViewModel: PreviewViewModel
-    private val executor = Executors.newSingleThreadExecutor()
 
     override fun onCreateView(
         inflater: LayoutInflater,
