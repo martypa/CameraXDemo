@@ -1,0 +1,31 @@
+package com.example.cameraxdemo.ui.capture
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.example.cameraxdemo.R
+
+class CaptureFragment : Fragment() {
+
+    private lateinit var captureViewModel: CaptureViewModel
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        captureViewModel =
+                ViewModelProviders.of(this).get(CaptureViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_capture, container, false)
+        val textView: TextView = root.findViewById(R.id.text_dashboard)
+        captureViewModel.text.observe(this, Observer {
+            textView.text = it
+        })
+        return root
+    }
+}

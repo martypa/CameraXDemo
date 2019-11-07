@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_preview"
+        android:icon="@drawable/ic_visibility_black_24dp"
+        android:title="@string/title_Preview" />
+
+    <item
+        android:id="@+id/navigation_Capture"
+        android:icon="@drawable/ic_add_a_photo_black_24dp"
+        android:title="@string/title_Capture" />
+    <item
+        android:id="@+id/navigation_Analysis"
+        android:icon="@drawable/ic_pageview_black_24dp"
+        android:title="@string/title_Analysis" />
+
+</menu>
