@@ -1,5 +1,6 @@
 package com.example.cameraxdemo.ui.capture
 
+import android.content.SharedPreferences
 import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Log
@@ -8,28 +9,39 @@ import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.cameraxdemo.R
+import com.example.cameraxdemo.ui.analysis.AnalysisViewModel
 import kotlinx.android.synthetic.main.fragment_capture.*
 import java.io.File
 import java.util.concurrent.Executors
 
 class CaptureFragment : Fragment() {
 
-    private lateinit var captureViewModel: CaptureViewModel
+
     private val executor = Executors.newSingleThreadExecutor()
+    private lateinit var settings: SharedPreferences
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        captureViewModel =
-                ViewModelProviders.of(this).get(CaptureViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_capture, container, false)
+        this.settings = activity!!.getSharedPreferences("cameraXDemo",0)
+        val switchButton = activity!!.findViewById<Switch>(R.id.switchFlash)
+        switchButton.setOnCheckedChangeListener(){buttonView,isChecked ->
+            val editor = settings.edit()
+            if(isChecked) editor.putBoolean("flashState", true) else editor.putBoolean("flashState", false)
+            editor.apply()
+        }
         return root
     }
 
@@ -39,10 +51,10 @@ class CaptureFragment : Fragment() {
         captureViewFinder.post { startCamera() }
     }
 
-
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
             setTargetResolution(Size(1920, 1080))
+            if(switchLens.isChecked) setLensFacing(CameraX.LensFacing.FRONT) else setLensFacing(CameraX.LensFacing.BACK)
         }.build()
 
         val preview = Preview(previewConfig)
@@ -52,12 +64,14 @@ class CaptureFragment : Fragment() {
             parent.removeView(captureViewFinder)
             parent.addView(captureViewFinder, 0)
             captureViewFinder.surfaceTexture = it.surfaceTexture
-           // updateTransform()
+            updateTransform()
         }
 
         val imageCaptureConfig = ImageCaptureConfig.Builder()
             .apply {
                 setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+                //if(flashMode) setFlashMode(FlashMode.ON) else setFlashMode(FlashMode.OFF)
+                //if(lensMode) setLensFacing(CameraX.LensFacing.FRONT) else setLensFacing(CameraX.LensFacing.BACK)
             }.build()
 
         val imageCapture = ImageCapture(imageCaptureConfig)
@@ -87,9 +101,6 @@ class CaptureFragment : Fragment() {
                     }
                 })
         }
-
-
-
         CameraX.bindToLifecycle(this, preview, imageCapture)
     }
 
@@ -111,5 +122,11 @@ class CaptureFragment : Fragment() {
         matrix.postRotate(-rotationDegrees.toFloat(), centerX, centerY)
         captureViewFinder.setTransform(matrix)
     }
+
+    private fun addSwitchListeners() {
+
+    }
+
+
 
 }
