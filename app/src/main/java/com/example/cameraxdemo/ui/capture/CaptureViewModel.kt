@@ -1,24 +1,28 @@
 package com.example.cameraxdemo.ui.capture
 
+import android.content.SharedPreferences
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 
-class CaptureViewModel : BaseObservable() {
 
-   var switchFlashState: Boolean
-   @Bindable get(): Boolean{
-      return switchFlashState
-   } set(value:Boolean){
-      switchFlashState = value
+
+class CaptureViewModel : ViewModel() {
+
+
+   private val userLiveData = MutableLiveData<Boolean>()
+
+   fun getUser(): LiveData<Boolean> {
+      return userLiveData
    }
 
-   var switchLensState: Boolean
-   @Bindable get(): Boolean{
-      return switchLensState
-   } set(value:Boolean){
-      switchLensState = value
+
+   fun doAction(newState: Boolean) {
+      this.userLiveData.value = newState
    }
+
+
 }

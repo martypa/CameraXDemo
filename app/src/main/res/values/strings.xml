@@ -4,7 +4,8 @@
     <string name="title_Capture">Capture</string>
     <string name="title_Analysis">Analysis</string>
     <string name="button_capture">Capture</string>
-    <string name="switch_flash">Flash</string>
+    <string name="switch_flash_on">Flash on</string>
+    <string name="switch_flash_off">Flash off</string>
     <string name="switch_lens">Lens</string>
     <string name="switch_lens_off">Back</string>
     <string name="switch_lens_on">Front</string>
