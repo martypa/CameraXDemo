@@ -6,15 +6,16 @@ import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Size
 import android.view.*
-import android.widget.SeekBar
 import android.widget.Toast
-import androidx.camera.core.*
+import androidx.camera.core.CameraX
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.Preview
+import androidx.camera.core.PreviewConfig
 import androidx.camera.view.TextureViewMeteringPointFactory
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.cameraxdemo.R
-import kotlinx.android.synthetic.main.fragment_capture.*
 import kotlinx.android.synthetic.main.fragment_preview.*
 
 class PreviewFragment : Fragment() {

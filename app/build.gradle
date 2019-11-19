@@ -33,6 +33,7 @@ android {
 def camerax_version = '1.0.0-alpha06'
 def camerax_view_version = '1.0.0-alpha03'
 def camerax_ext_version = '1.0.0-alpha03'
+def play_service_verison = '7.8+'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -50,6 +51,7 @@ dependencies {
     implementation "androidx.camera:camera-camera2:${camerax_version}"
     implementation "androidx.camera:camera-view:${camerax_view_version}"
     implementation "androidx.camera:camera-extensions:${camerax_ext_version}"
+    implementation "com.google.android.gms:play-services:${play_service_verison}"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
