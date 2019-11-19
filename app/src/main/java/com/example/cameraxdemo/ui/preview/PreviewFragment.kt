@@ -5,38 +5,30 @@ import android.content.pm.PackageManager
 import android.graphics.Matrix
 import android.os.Bundle
 import android.util.Size
-import android.view.LayoutInflater
-import android.view.Surface
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SeekBar
 import android.widget.Toast
-import androidx.camera.core.CameraX
-import androidx.camera.core.Preview
-import androidx.camera.core.PreviewConfig
+import androidx.camera.core.*
+import androidx.camera.view.TextureViewMeteringPointFactory
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import com.example.cameraxdemo.MainActivity
 import com.example.cameraxdemo.R
+import kotlinx.android.synthetic.main.fragment_capture.*
 import kotlinx.android.synthetic.main.fragment_preview.*
-import java.util.concurrent.Executors
 
 class PreviewFragment : Fragment() {
 
     private val REQUEST_CODE_PERMISSIONS = 10
     private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
 
-    private lateinit var previewViewModel: PreviewViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        previewViewModel = ViewModelProviders.of(this).get(PreviewViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_preview, container, false)
-
         return root
     }
 
@@ -73,6 +65,7 @@ class PreviewFragment : Fragment() {
             updateTransform()
         }
         CameraX.bindToLifecycle(this, preview)
+        setUpTapToFocus()
     }
 
     private fun updateTransform() {
@@ -116,6 +109,25 @@ class PreviewFragment : Fragment() {
             it
         ) == PackageManager.PERMISSION_GRANTED
     }
+
+
+    private fun setUpTapToFocus() {
+        val cameraControl = CameraX.getCameraControl(CameraX.LensFacing.BACK)
+        viewfinder.setOnTouchListener { _, event ->
+            if (event.action != MotionEvent.ACTION_UP) {
+               return@setOnTouchListener false
+            }
+            val factory = TextureViewMeteringPointFactory(viewfinder)
+            val point = factory.createPoint(event.x, event.y)
+            val action = FocusMeteringAction.Builder.from(point).build()
+            cameraControl.startFocusAndMetering(action)
+            return@setOnTouchListener true
+        }
+    }
+
+
+
+
 
 
 }
