@@ -7,9 +7,14 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import org.opencv.android.OpenCVLoader
 
 
 class MainActivity : AppCompatActivity() {
+
+    init {
+        OpenCVLoader.initDebug()
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

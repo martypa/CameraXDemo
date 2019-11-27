@@ -1,13 +1,19 @@
 package com.example.cameraxdemo.ui.analysis
 
-import android.annotation.SuppressLint
+import XZingAnalyzer
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.camera.core.*
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.cameraxdemo.R
 import kotlinx.android.synthetic.main.fragment_analysis.*
 import java.util.concurrent.Executors
@@ -15,6 +21,7 @@ import java.util.concurrent.Executors
 class AnalysisFragment : Fragment() {
 
     private val executor = Executors.newSingleThreadExecutor()
+    private val executor2 = Executors.newSingleThreadExecutor()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +41,7 @@ class AnalysisFragment : Fragment() {
 
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
-            setDefaultResolution(Size(320, 180))
+            setTargetResolution(Size(320, 180))
         }.build()
 
         val preview = Preview(previewConfig)
@@ -48,18 +55,26 @@ class AnalysisFragment : Fragment() {
         }
 
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
-            // In our analysis, we care more about the latest image than
-            // analyzing *every* image
-            setImageReaderMode(
-                ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+            setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
+            setImageQueueDepth(10)
         }.build()
 
-        // Build the image analysis use case and instantiate our analyzer
-        val analyzerUseCase = ImageAnalysis(analyzerConfig).apply {
-            setAnalyzer(executor, QRCodeAnalyzer(activity!!))
-        }
+        val analyzeQR = ImageAnalysis(analyzerConfig)
 
-        CameraX.bindToLifecycle(this, preview, analyzerUseCase)
+        analyzeQR.setAnalyzer(executor, XZingAnalyzer())
+
+
+
+        CameraX.bindToLifecycle(this, preview, analyzeQR)
+
+        val intentFilter = IntentFilter("QR-Result")
+        LocalBroadcastManager.getInstance(this.activity!!).registerReceiver(QRRsultReceiver(activity!!), intentFilter)
     }
 
+
+    class QRRsultReceiver(val contextM: Context): BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Toast.makeText(contextM, intent?.getStringExtra("qrText"), Toast.LENGTH_SHORT).show()
+        }
+    }
 }
