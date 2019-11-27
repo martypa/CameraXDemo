@@ -1,12 +1,10 @@
 package com.example.cameraxdemo.ui.analysis
 
 import XZingAnalyzer
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.util.Size
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.cameraxdemo.R
 import kotlinx.android.synthetic.main.fragment_analysis.*
+import kotlinx.android.synthetic.main.fragment_capture.*
 import java.util.concurrent.Executors
 
 class AnalysisFragment : Fragment() {
 
     private val executor = Executors.newSingleThreadExecutor()
-    private val executor2 = Executors.newSingleThreadExecutor()
+    private val ANALYZER_PREFS:String = "analyzer-prefs"
+    private lateinit var analyzeQR: ImageAnalysis
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,11 +35,15 @@ class AnalysisFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        analysisFinder.post { startCamera() }
+        val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
+        val analyzerState = preferences.getBoolean(ANALYZER_PREFS, false)
+        analyzerSwitch.isChecked = analyzerState
+        addListener()
+        analysisFinder.post { startCamera(analyzerSwitch.isChecked) }
     }
 
 
-    private fun startCamera() {
+    private fun startCamera(withAnalyzer: Boolean) {
         val previewConfig = PreviewConfig.Builder().apply {
             setTargetResolution(Size(320, 180))
         }.build()
@@ -59,11 +63,10 @@ class AnalysisFragment : Fragment() {
             setImageQueueDepth(10)
         }.build()
 
-        val analyzeQR = ImageAnalysis(analyzerConfig)
-
-        analyzeQR.setAnalyzer(executor, XZingAnalyzer())
-
-
+        this.analyzeQR = ImageAnalysis(analyzerConfig)
+        if(withAnalyzer) {
+            analyzeQR.setAnalyzer(executor, XZingAnalyzer())
+        }
 
         CameraX.bindToLifecycle(this, preview, analyzeQR)
 
@@ -72,9 +75,26 @@ class AnalysisFragment : Fragment() {
     }
 
 
+    fun addListener(){
+        analyzerSwitch.setOnCheckedChangeListener {buttonView, isChecked ->
+            val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
+            val editor : SharedPreferences.Editor = preferences.edit()
+            editor.putBoolean(ANALYZER_PREFS,analyzerSwitch.isChecked)
+            editor.commit()
+            if(isChecked){
+                this.analyzeQR.setAnalyzer(executor, XZingAnalyzer())
+            }else{
+                this.analyzeQR.removeAnalyzer()
+            }
+        }
+    }
+
+
     class QRRsultReceiver(val contextM: Context): BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            Toast.makeText(contextM, intent?.getStringExtra("qrText"), Toast.LENGTH_SHORT).show()
+            val toast: Toast = Toast.makeText(contextM, intent?.getStringExtra("qrText"), Toast.LENGTH_SHORT)
+            toast.setGravity(Gravity.HORIZONTAL_GRAVITY_MASK,0,0)
+            toast.show()
         }
     }
 }

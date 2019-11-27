@@ -9,4 +9,5 @@
     <string name="switch_lens">Lens</string>
     <string name="switch_lens_off">Back</string>
     <string name="switch_lens_on">Front</string>
+    <string name="switch_analyzer">Analyzer ON/OFF</string>
 </resources>
