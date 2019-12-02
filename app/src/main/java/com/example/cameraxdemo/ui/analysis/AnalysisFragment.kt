@@ -1,6 +1,6 @@
 package com.example.cameraxdemo.ui.analysis
 
-import XZingAnalyzer
+import ZXingAnalyzer
 import android.content.*
 import android.os.Bundle
 import android.util.Size
@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.cameraxdemo.R
 import kotlinx.android.synthetic.main.fragment_analysis.*
-import kotlinx.android.synthetic.main.fragment_capture.*
 import java.util.concurrent.Executors
 
 class AnalysisFragment : Fragment() {
@@ -37,18 +36,18 @@ class AnalysisFragment : Fragment() {
         super.onStart()
         val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
         val analyzerState = preferences.getBoolean(ANALYZER_PREFS, false)
-        analyzerSwitch.isChecked = analyzerState
-        addListener()
+        analyzerSwitch.isChecked = analyzerState                              //read switch state
+        addListener()                                                         //add switch onChange listener
         analysisFinder.post { startCamera(analyzerSwitch.isChecked) }
     }
 
 
     private fun startCamera(withAnalyzer: Boolean) {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(320, 180))
+            setTargetResolution(Size(320, 180))                     //set image resolution
         }.build()
 
-        val preview = Preview(previewConfig)
+        val preview = Preview(previewConfig)                                    //create preview use-case
 
         preview.setOnPreviewOutputUpdateListener {
             val parent = analysisFinder.parent as ViewGroup
@@ -59,38 +58,42 @@ class AnalysisFragment : Fragment() {
         }
 
         val analyzerConfig = ImageAnalysisConfig.Builder().apply {
-            setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)
-            setImageQueueDepth(10)
+            setImageReaderMode(ImageAnalysis.ImageReaderMode.ACQUIRE_LATEST_IMAGE)          //set imageReaderMode
+            setImageQueueDepth(10)                                                          //set imageQueue size
         }.build()
 
-        this.analyzeQR = ImageAnalysis(analyzerConfig)
+        this.analyzeQR = ImageAnalysis(analyzerConfig)                                      //create ImageAnalysis use-case
         if(withAnalyzer) {
-            analyzeQR.setAnalyzer(executor, XZingAnalyzer())
+            analyzeQR.setAnalyzer(executor, ZXingAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
         }
 
-        CameraX.bindToLifecycle(this, preview, analyzeQR)
+        CameraX.bindToLifecycle(this, preview, analyzeQR)                       //bind to lifecycle
 
         val intentFilter = IntentFilter("QR-Result")
-        LocalBroadcastManager.getInstance(this.activity!!).registerReceiver(QRRsultReceiver(activity!!), intentFilter)
+        LocalBroadcastManager.getInstance(this.activity!!).registerReceiver(QRRsultReceiver(activity!!), intentFilter)  //create LocalBroadcastManager for ZXing results
     }
 
-
+    /*
+    implement onChange listener for the switch
+     */
     fun addListener(){
-        analyzerSwitch.setOnCheckedChangeListener {buttonView, isChecked ->
+        analyzerSwitch.setOnCheckedChangeListener { _, isChecked ->
             val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
             val editor : SharedPreferences.Editor = preferences.edit()
             editor.putBoolean(ANALYZER_PREFS,analyzerSwitch.isChecked)
             editor.commit()
             if(isChecked){
-                this.analyzeQR.setAnalyzer(executor, XZingAnalyzer())
+                this.analyzeQR.setAnalyzer(executor, ZXingAnalyzer())
             }else{
                 this.analyzeQR.removeAnalyzer()
             }
         }
     }
 
-
-    class QRRsultReceiver(val contextM: Context): BroadcastReceiver(){
+    /*
+    Intent Receiver which display the datamatrix result as toast
+     */
+    inner class QRRsultReceiver(val contextM: Context): BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             val toast: Toast = Toast.makeText(contextM, intent?.getStringExtra("qrText"), Toast.LENGTH_SHORT)
             toast.setGravity(Gravity.HORIZONTAL_GRAVITY_MASK,0,0)

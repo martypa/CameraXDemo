@@ -42,19 +42,21 @@ class CaptureFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
-        val flashState = preferences.getBoolean(FLASH_PREF, false)
-        val lensState = preferences.getBoolean(LENS_PREF, false)
+        val flashState = preferences.getBoolean(FLASH_PREF, false)   //read the flash-switch state
+        val lensState = preferences.getBoolean(LENS_PREF, false)     //read the lens-switch state
         switchFlash.isChecked = flashState
         switchLens.isChecked = lensState
-        switchListeners()
+        switchListeners()                                            //add switch change listener
         captureViewFinder.post { startCamera() }
     }
-
+    /*
+        create the camera function with ImageCapture use-case
+     */
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(1920, 1080))
+            setTargetResolution(Size(1920, 1080))        //set image resolution
             if(switchLens.isChecked){
-                setLensFacing(CameraX.LensFacing.FRONT)
+                setLensFacing(CameraX.LensFacing.FRONT)              //set lensfacing
                 switchLens.setText(R.string.switch_lens_on)
             } else{
                 setLensFacing(CameraX.LensFacing.BACK)
@@ -62,21 +64,21 @@ class CaptureFragment : Fragment() {
             }
         }.build()
 
-        this.preview = Preview(previewConfig)
+        this.preview = Preview(previewConfig)                       //create preview use-case
 
         preview.setOnPreviewOutputUpdateListener {
             val parent = captureViewFinder.parent as ViewGroup
             parent.removeView(captureViewFinder)
             parent.addView(captureViewFinder, 0)
             captureViewFinder.surfaceTexture = it.surfaceTexture
-            updateTransform()
+            correctionForDisplayRotation()
         }
 
         val imageCaptureConfig = ImageCaptureConfig.Builder()
             .apply {
-                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY)
+                setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY) //set imageCapture mode
                 if(switchFlash.isChecked) {
-                    setFlashMode(FlashMode.ON)
+                    setFlashMode(FlashMode.ON)                       //set Flashmode
                     switchFlash.setText(R.string.switch_flash_on)
                 } else{
                     setFlashMode(FlashMode.OFF)
@@ -91,8 +93,8 @@ class CaptureFragment : Fragment() {
                 }
             }.build()
 
-        this.imageCapture = ImageCapture(imageCaptureConfig)
-        captureButton.setOnClickListener {
+        this.imageCapture = ImageCapture(imageCaptureConfig)        //create ImageCapture use-case
+        captureButton.setOnClickListener {                          //create captureButton onclick listener
             val file = File(activity!!.externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
 
             imageCapture.takePicture(file, executor,
@@ -118,10 +120,12 @@ class CaptureFragment : Fragment() {
                     }
                 })
         }
-        CameraX.bindToLifecycle(this, preview, imageCapture)
+        CameraX.bindToLifecycle(this, preview, imageCapture)   //bind to lifecycle
     }
-
-    private fun updateTransform() {
+    /*
+    create a correct preview to account for display rotation
+     */
+    private fun correctionForDisplayRotation() {
         val matrix = Matrix()
 
         // Compute the center of the view finder
@@ -140,9 +144,12 @@ class CaptureFragment : Fragment() {
         captureViewFinder.setTransform(matrix)
     }
 
+    /*
+    implement onChange listener for both switches
+     */
     private fun switchListeners(){
 
-        switchFlash.setOnCheckedChangeListener {buttonView, isChecked ->
+        switchFlash.setOnCheckedChangeListener { _, _ ->
             val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
             val editor : SharedPreferences.Editor = preferences.edit()
             editor.putBoolean(FLASH_PREF,switchFlash.isChecked)
@@ -152,7 +159,7 @@ class CaptureFragment : Fragment() {
         }
 
 
-        switchLens.setOnCheckedChangeListener{ buttonView, isChecked ->
+        switchLens.setOnCheckedChangeListener{ _, _ ->
             val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
             val editor : SharedPreferences.Editor = preferences.edit()
             editor.putBoolean(LENS_PREF,switchLens.isChecked)

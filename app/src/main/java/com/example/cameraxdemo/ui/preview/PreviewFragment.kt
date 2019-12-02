@@ -44,39 +44,44 @@ class PreviewFragment : Fragment() {
                 REQUEST_CODE_PERMISSIONS
             )
         }
-
+        //Listener if the device rotate to landscape mode
         viewfinder.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-            updateTransform()
+            correctionForDisplayRotation()
         }
     }
 
+    /*
+        create the camera function with preview use-case
+     */
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(1920, 1080))
+            setTargetResolution(Size(1920, 1080))            //set image resolution
         }.build()
 
-        val preview = Preview(previewConfig)
+        val preview = Preview(previewConfig)                            //create preview use-case
 
         preview.setOnPreviewOutputUpdateListener {
             val parent = viewfinder.parent as ViewGroup
             parent.removeView(viewfinder)
             parent.addView(viewfinder, 0)
 
-            viewfinder.surfaceTexture = it.surfaceTexture
-            updateTransform()
+            viewfinder.surfaceTexture = it.surfaceTexture               //add new image to surfaceTexture
+            correctionForDisplayRotation()
         }
-        CameraX.bindToLifecycle(this, preview)
-        setUpTapToFocus()
+        CameraX.bindToLifecycle(this, preview)              //bind to Lifecycle
+        setUpTapToFocus()                                              //add TapToFocus listener
     }
 
-    private fun updateTransform() {
+    /*
+    create a correct preview to account for display rotation
+     */
+    private fun correctionForDisplayRotation() {
         val matrix = Matrix()
 
         // Compute the center of the view finder
         val centerX = viewfinder.width / 2f
         val centerY = viewfinder.height / 2f
 
-        // Correct preview output to account for display rotation
         val rotationDegrees = when (viewfinder.display.rotation) {
             Surface.ROTATION_0 -> 0
             Surface.ROTATION_90 -> 90
@@ -103,7 +108,9 @@ class PreviewFragment : Fragment() {
         }
     }
 
-
+    /*
+    check if all permissions are granted depend on Required_Permissions
+     */
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(
             activity!!.baseContext,
@@ -112,6 +119,9 @@ class PreviewFragment : Fragment() {
     }
 
 
+    /*
+     implements the Tap to Focus function
+     */
     private fun setUpTapToFocus() {
         val cameraControl = CameraX.getCameraControl(CameraX.LensFacing.BACK)
         viewfinder.setOnTouchListener { _, event ->
