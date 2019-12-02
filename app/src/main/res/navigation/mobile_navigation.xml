@@ -7,12 +7,20 @@
     <fragment
         android:id="@+id/navigation_preview"
         android:name="com.example.cameraxdemo.ui.preview.PreviewFragment"
-        android:label="@string/title_Preview" />
+        android:label="@string/title_Preview" >
+        <action
+            android:id="@+id/action_navigation_preview_to_navigation_Capture"
+            app:destination="@id/navigation_Capture" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_Capture"
         android:name="com.example.cameraxdemo.ui.capture.CaptureFragment"
-        android:label="@string/title_Capture" />
+        android:label="@string/title_Capture" >
+        <action
+            android:id="@+id/action_navigation_Capture_to_navigation_Analysis"
+            app:destination="@id/navigation_Analysis" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_Analysis"

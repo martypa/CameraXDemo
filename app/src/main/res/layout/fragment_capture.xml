@@ -27,6 +27,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/captureViewFinder" />
 
+    <Button
+        android:id="@+id/gallery_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/gallery_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.461"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/captureViewFinder"
+        app:layout_constraintVertical_bias="1.0" />
+
     <Switch
         android:id="@+id/switchFlash"
         android:layout_width="wrap_content"

@@ -10,4 +10,9 @@
     <string name="switch_lens_off">Back</string>
     <string name="switch_lens_on">Front</string>
     <string name="switch_analyzer">Analyzer ON/OFF</string>
+    <string name="gallery_button">gallery</string>
+
+    <string name="introTitle">CameraX Demo App</string>
+    <string name="title_activity_intro"></string>
+    <string name="introSecondTitle">created by Patrick Marty</string>
 </resources>

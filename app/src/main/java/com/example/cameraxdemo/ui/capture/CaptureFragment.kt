@@ -1,9 +1,10 @@
 package com.example.cameraxdemo.ui.capture
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Matrix
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
@@ -22,11 +23,12 @@ import java.util.concurrent.Executors
 class CaptureFragment : Fragment() {
 
     private val executor = Executors.newSingleThreadExecutor()
-    private val FLASH_PREF:String = "flash-prferences"
-    private val LENS_PREF:String = "lens-prferences"
+    private val FLASH_PREF: String = "flash-prferences"
+    private val LENS_PREF: String = "lens-prferences"
 
     private lateinit var preview: Preview
     private lateinit var imageCapture: ImageCapture
+    private var imageName: String = ""
 
 
     override fun onCreateView(
@@ -47,18 +49,27 @@ class CaptureFragment : Fragment() {
         switchFlash.isChecked = flashState
         switchLens.isChecked = lensState
         switchListeners()                                            //add switch change listener
+        gallery_button.setOnClickListener {                          //add galleryButton listener
+            val intent = Intent()
+            val url = Uri.parse(activity!!.filesDir.absolutePath)
+            intent.action = Intent.ACTION_GET_CONTENT
+            intent.setDataAndType(url, "image/*")
+            startActivity(intent)
+            CameraX.unbindAll()
+        }                       //add galleryButton listener
         captureViewFinder.post { startCamera() }
     }
+
     /*
         create the camera function with ImageCapture use-case
      */
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
             setTargetResolution(Size(1920, 1080))        //set image resolution
-            if(switchLens.isChecked){
+            if (switchLens.isChecked) {
                 setLensFacing(CameraX.LensFacing.FRONT)              //set lensfacing
                 switchLens.setText(R.string.switch_lens_on)
-            } else{
+            } else {
                 setLensFacing(CameraX.LensFacing.BACK)
                 switchLens.setText(R.string.switch_lens_off)
             }
@@ -77,25 +88,28 @@ class CaptureFragment : Fragment() {
         val imageCaptureConfig = ImageCaptureConfig.Builder()
             .apply {
                 setCaptureMode(ImageCapture.CaptureMode.MIN_LATENCY) //set imageCapture mode
-                if(switchFlash.isChecked) {
+                if (switchFlash.isChecked) {
                     setFlashMode(FlashMode.ON)                       //set Flashmode
                     switchFlash.setText(R.string.switch_flash_on)
-                } else{
+                } else {
                     setFlashMode(FlashMode.OFF)
                     switchFlash.setText(R.string.switch_flash_off)
                 }
-                if(switchLens.isChecked){
+                if (switchLens.isChecked) {
                     setLensFacing(CameraX.LensFacing.FRONT)
                     switchLens.setText(R.string.switch_lens_on)
-                } else{
+                } else {
                     setLensFacing(CameraX.LensFacing.BACK)
                     switchLens.setText(R.string.switch_lens_off)
                 }
             }.build()
 
         this.imageCapture = ImageCapture(imageCaptureConfig)        //create ImageCapture use-case
-        captureButton.setOnClickListener {                          //create captureButton onclick listener
-            val file = File(activity!!.externalMediaDirs.first(), "${System.currentTimeMillis()}.jpg")
+        captureButton.setOnClickListener {
+            //create captureButton onclick listener
+
+            this.imageName = "${System.currentTimeMillis()}.jpeg"
+            val file = File(activity!!.filesDir, imageName)
 
             imageCapture.takePicture(file, executor,
                 object : ImageCapture.OnImageSavedListener {
@@ -122,6 +136,7 @@ class CaptureFragment : Fragment() {
         }
         CameraX.bindToLifecycle(this, preview, imageCapture)   //bind to lifecycle
     }
+
     /*
     create a correct preview to account for display rotation
      */
@@ -147,29 +162,27 @@ class CaptureFragment : Fragment() {
     /*
     implement onChange listener for both switches
      */
-    private fun switchListeners(){
+    private fun switchListeners() {
 
         switchFlash.setOnCheckedChangeListener { _, _ ->
             val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
-            val editor : SharedPreferences.Editor = preferences.edit()
-            editor.putBoolean(FLASH_PREF,switchFlash.isChecked)
+            val editor: SharedPreferences.Editor = preferences.edit()
+            editor.putBoolean(FLASH_PREF, switchFlash.isChecked)
             editor.commit()
             CameraX.unbind(preview, imageCapture)
             captureViewFinder.post { startCamera() }
         }
 
 
-        switchLens.setOnCheckedChangeListener{ _, _ ->
+        switchLens.setOnCheckedChangeListener { _, _ ->
             val preferences = activity!!.getPreferences(Context.MODE_PRIVATE)
-            val editor : SharedPreferences.Editor = preferences.edit()
-            editor.putBoolean(LENS_PREF,switchLens.isChecked)
+            val editor: SharedPreferences.Editor = preferences.edit()
+            editor.putBoolean(LENS_PREF, switchLens.isChecked)
             editor.commit()
             CameraX.unbind(preview, imageCapture)
             captureViewFinder.post { startCamera() }
         }
 
     }
-
-
 
 }
