@@ -10,7 +10,7 @@ class IntroActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_into)
 
-        val thread: Thread = Thread(startActivityThread())
+        val thread = Thread(startActivityThread())
         thread.start()
     }
 
