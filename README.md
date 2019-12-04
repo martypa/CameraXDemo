@@ -12,6 +12,6 @@ mittels Switch ein- und ausgeschaltet werden.
 
 ### Installation
 
-Die Applikation kann entweder über die APK welche sich unter /apk/cameraXDemoApp.apk befindet, installiert werden.<br>
+Die Applikation kann entweder über die APK welche sich unter apk/cameraXDemoApp.apk befindet, installiert werden.<br>
 Die zweite Möglichkeit ist die Applikation über Android Studio auf dem Emulator gestartet werden
-(getestet wurde der Emulator Pixel 2)<br>
+(getestet wurde der Emulator Pixel 2). Der Simulator kann nicht alle Funktionen von CameraX abdecken. Es wird empfohlen die App auf dem eigenen Smartphone zu installieren.<br>
