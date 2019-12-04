@@ -15,4 +15,5 @@
     <string name="introTitle">CameraX Demo App</string>
     <string name="title_activity_intro">CameraX Demo App</string>
     <string name="introSecondTitle">created by Patrick Marty</string>
+    <string name="title_activity_intro_title">MOBLAB HS19 sa15 CameraX</string>
 </resources>

@@ -1,10 +1,11 @@
 package com.example.cameraxdemo.ui.capture
 
-import android.content.*
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
@@ -65,7 +66,11 @@ class CaptureFragment : Fragment() {
      */
     private fun startCamera() {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(1920, 1080))        //set image resolution
+            if(switchLens.isChecked){
+                setTargetResolution(Size(640, 640))      //set image resolution
+            }else{
+                setTargetResolution(Size(1920, 1080))
+            }
             if (switchLens.isChecked) {
                 setLensFacing(CameraX.LensFacing.FRONT)              //set lensfacing
                 switchLens.setText(R.string.switch_lens_on)
