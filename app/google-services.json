@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "673085802499",
+    "firebase_url": "https://intelicook-7a0f3.firebaseio.com",
+    "project_id": "intelicook-7a0f3",
+    "storage_bucket": "intelicook-7a0f3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:673085802499:android:0e372393919a64e9c6e636",
+        "android_client_info": {
+          "package_name": "com.example.cameraxdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "673085802499-240d036pfihbai6les52m58iamh47em6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cameraxdemo",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "673085802499-34i2ki500nh5mh5164o6n99f5tcdr112.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0HfcpqyjQCetY9ERtuNm5yC-nvYFPjlE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "673085802499-34i2ki500nh5mh5164o6n99f5tcdr112.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
