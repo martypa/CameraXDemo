@@ -1,5 +1,6 @@
 package com.example.cameraxdemo.ui.analysis
 
+import CloudAnalyzer
 import ZXingAnalyzer
 import android.content.*
 import android.os.Bundle
