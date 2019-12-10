@@ -4,6 +4,7 @@ import CloudAnalyzer
 import ZXingAnalyzer
 import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -45,7 +46,7 @@ class AnalysisFragment : Fragment() {
 
     private fun startCamera(withAnalyzer: Boolean) {
         val previewConfig = PreviewConfig.Builder().apply {
-            setTargetResolution(Size(320, 180))                     //set image resolution
+            setTargetResolution(Size(1920, 1080))                     //set image resolution
         }.build()
 
         val preview = Preview(previewConfig)                                    //create preview use-case
@@ -66,6 +67,8 @@ class AnalysisFragment : Fragment() {
         this.analyzeQR = ImageAnalysis(analyzerConfig)                                      //create ImageAnalysis use-case
         if(withAnalyzer) {
             analyzeQR.setAnalyzer(executor, ZXingAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
+            //analyzeQR.setAnalyzer(executor, CloudAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
+
         }
 
         CameraX.bindToLifecycle(this, preview, analyzeQR)                       //bind to lifecycle
@@ -85,6 +88,9 @@ class AnalysisFragment : Fragment() {
             editor.commit()
             if(isChecked){
                 this.analyzeQR.setAnalyzer(executor, ZXingAnalyzer())
+                Log.d("myTag","analyzer is on")
+                //this.analyzeQR.setAnalyzer(executor, CloudAnalyzer())
+
             }else{
                 this.analyzeQR.removeAnalyzer()
             }

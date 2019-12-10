@@ -60,6 +60,11 @@ class CloudAnalyzer : ImageAnalysis.Analyzer, Activity() {
         image.let {
             val m: Mat = Yuv.rgb(it!!.image!!)                                                          //convert image to Mat image (OpenCV)
             val bitmap: Bitmap = Bitmap.createBitmap(m.width(), m.height(),Bitmap.Config.ARGB_8888)     //create a Bitmap
+            Utils.matToBitmap(m,bitmap)
+            val arr = IntArray(bitmap.width*bitmap.height)
+            bitmap.getPixels(arr,0,bitmap.width,0,0,bitmap.width,bitmap.height)              //convert Mat to Bitmap
+            val l = RGBLuminanceSource(bitmap.width,bitmap.height,arr)
+
             val image = FirebaseVisionImage.fromBitmap(bitmap)                                          //create a FirebaseBisionImage object from a Bitmap object
 
             val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);

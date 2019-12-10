@@ -13,6 +13,13 @@ import com.google.zxing.pdf417.PDF417Reader
 import com.quickbirdstudios.yuv2mat.Yuv
 import org.opencv.android.Utils
 import org.opencv.core.Mat
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import com.google.zxing.datamatrix.decoder.Decoder
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class ZXingAnalyzer : ImageAnalysis.Analyzer, Activity() {
@@ -27,11 +34,10 @@ class ZXingAnalyzer : ImageAnalysis.Analyzer, Activity() {
             val l = RGBLuminanceSource(bitmap.width,bitmap.height,arr)                                  //convert Bitmap to source for ZXing Reader
             try {
                 val reader: Result = PDF417Reader().decode(BinaryBitmap(HybridBinarizer(l)))        //decode image
-                val intent = Intent("QR-Result")                                                  //create intent with result
+                val intent = Intent("QR-Result")                                                    //create intent with result
                 intent.putExtra("qrText", reader.text)
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent)                    //send intent with result
             }catch (e: Exception){
-
             }
         }
     }
