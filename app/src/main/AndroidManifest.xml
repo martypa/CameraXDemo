@@ -23,9 +23,15 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".MainActivity"
             android:label="@string/app_name">
+
         </activity>
+
+        <meta-data
+                android:name="com.google.firebase.ml.vision.DEPENDENCIES"
+                android:value="ocr" />
     </application>
 
 </manifest>

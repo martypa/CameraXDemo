@@ -36,28 +36,10 @@ import com.google.android.gms.tasks.Task
 import androidx.core.content.ContextCompat.getSystemService
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.util.Log
+import kotlinx.android.synthetic.main.activity_into.view.*
 
 
-
-
-
-
-
-
-
-
-
-
-
-var options = FirebaseVisionBarcodeDetectorOptions.Builder()
-    .setBarcodeFormats(
-        FirebaseVisionBarcode.FORMAT_EAN_13,
-        FirebaseVisionBarcode.FORMAT_EAN_8
-    )
-    .build()
-
-
-class CloudAnalyzer : ImageAnalysis.Analyzer, Activity() {
+class TextAnalyzer : ImageAnalysis.Analyzer, Activity() {
 
     override fun analyze(image: ImageProxy?, rotationDegrees: Int) {
         image.let {
@@ -71,31 +53,34 @@ class CloudAnalyzer : ImageAnalysis.Analyzer, Activity() {
 
             val image = FirebaseVisionImage.fromBitmap(bitmap)                                          //create a FirebaseBisionImage object from a Bitmap object
 
-            val detector = FirebaseVision.getInstance().getVisionBarcodeDetector(options);
+
+            val detector = FirebaseVision.getInstance()
+                .onDeviceTextRecognizer
+
+            val detector2 = FirebaseVision.getInstance().cloudTextRecognizer
+// Or, to change the default settings:
+// val detector = FirebaseVision.getInstance().getCloudTextRecognizer(options)
 
 
-            detector.detectInImage(image)
-                .addOnSuccessListener {
+            val result = detector2.processImage(image)
+                .addOnSuccessListener { results ->
+                        var result_text = results.text
+                        Log.d("TAG", result_text)
 
-                        for (barcode in it) {
-                            val bounds = barcode.boundingBox
-                            val corners = barcode.cornerPoints
+                        }
 
-                            val rawValue = barcode.rawValue
 
-                            val valueType = barcode.valueType
+                    // Task completed successfully
+                    // ...
 
-                            Log.d("rawValue", rawValue)
-                            Log.d("valueType", valueType.toString())
-
-                        //intent.putExtra("qrText", text)
-                        //LocalBroadcastManager.getInstance(this).sendBroadcast(intent)                    //send intent with result
-                    }
-                }
                 .addOnFailureListener {
-                    it.printStackTrace()
-                    intent = Intent("Task failed with an exception")
+                    // Task failed with an exception
+                    // ...
+                    print("fail in Listener")
                 }
+
+
+
 
 
             //val reader: Result = DataMatrixReader().decode(BinaryBitmap(HybridBinarizer(l)))        //decode image

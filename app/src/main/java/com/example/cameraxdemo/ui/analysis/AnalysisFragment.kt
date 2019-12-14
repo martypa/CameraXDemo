@@ -2,6 +2,7 @@ package com.example.cameraxdemo.ui.analysis
 
 import CloudAnalyzer
 import ZXingAnalyzer
+import TextAnalyzer
 import android.content.*
 import android.os.Bundle
 import android.util.Log
@@ -66,8 +67,10 @@ class AnalysisFragment : Fragment() {
 
         this.analyzeQR = ImageAnalysis(analyzerConfig)                                      //create ImageAnalysis use-case
         if(withAnalyzer) {
-            analyzeQR.setAnalyzer(executor, ZXingAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
+            //analyzeQR.setAnalyzer(executor, ZXingAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
             //analyzeQR.setAnalyzer(executor, CloudAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
+            analyzeQR.setAnalyzer(executor, TextAnalyzer())                                //setAnalyzer with thread executor and ZXingAnalyzer
+
 
         }
 
@@ -87,9 +90,10 @@ class AnalysisFragment : Fragment() {
             editor.putBoolean(ANALYZER_PREFS,analyzerSwitch.isChecked)
             editor.commit()
             if(isChecked){
-                this.analyzeQR.setAnalyzer(executor, ZXingAnalyzer())
-                Log.d("myTag","analyzer is on")
+                //this.analyzeQR.setAnalyzer(executor, ZXingAnalyzer())
                 //this.analyzeQR.setAnalyzer(executor, CloudAnalyzer())
+                this.analyzeQR.setAnalyzer(executor, TextAnalyzer())
+
 
             }else{
                 this.analyzeQR.removeAnalyzer()
